@@ -73,6 +73,11 @@
     pointer-events: none;
     transform: translateY(-.5rem);
   }
+  /* iPadOS 原生全屏会在左上角浮一个 × 退出按钮（点屏幕时会出现），
+     把左侧控件整体让开，避免遮住「开始 / 暂停」 */
+  body.is-fs #hud{
+    padding-left: 3.4rem;
+  }
 
   button{
     font: inherit;
@@ -818,25 +823,39 @@
   });
 
   /* ---------------- 全屏 ---------------- */
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function fsLabel() { return isFullscreen() ? "退出全屏" : "全屏"; }
+
+  // iPadOS 原生全屏的退出按钮在左上角，用 is-fs 给控件让位
+  function syncFullscreen() {
+    el.body.classList.toggle("is-fs", isFullscreen());
+    el.btnFull.textContent = fsLabel();
+  }
+  document.addEventListener("fullscreenchange", syncFullscreen);
+  document.addEventListener("webkitfullscreenchange", syncFullscreen);
+
   function toggleFullscreen() {
     var d = document;
     var elFull = d.documentElement;
-    var isFull = d.fullscreenElement || d.webkitFullscreenElement;
-    if (isFull) {
+    if (isFullscreen()) {
       (d.exitFullscreen || d.webkitExitFullscreen || function(){}).call(d);
     } else {
       var req = elFull.requestFullscreen || elFull.webkitRequestFullscreen;
       if (req) {
         var r = req.call(elFull);
-        if (r && r.catch) r.catch(function(){ showFsHint(); });
+        if (r && r.catch) r.catch(function () { showFsHint(); });
       } else {
         showFsHint();
       }
     }
   }
   function showFsHint() {
-    el.btnFull.textContent = "已沉浸";
-    setTimeout(function () { el.btnFull.textContent = "全屏"; }, 1600);
+    el.btnFull.textContent = "请加到主屏幕";
+    el.btnFull.title = "这个浏览器不支持网页全屏。用 Safari 的分享 → 添加到主屏幕，从图标启动即可全屏。";
+    setTimeout(syncFullscreen, 2600);
   }
 
   /* ---------------- 控件自动隐藏 ---------------- */
@@ -984,6 +1003,7 @@
   buildPresets();
   applySettings();
   syncChrome();
+  syncFullscreen();
   renderRecords();
   render();
   requestAnimationFrame(loop);
