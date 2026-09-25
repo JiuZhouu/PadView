@@ -1,6 +1,8 @@
 # PadView · 拍摄计时器
 
-拍 vlog 时摆在画面里的计时看板。单个 `index.html`，无依赖、可离线，用 iPad 浏览器打开即可。
+拍 vlog 时摆在画面里的计时看板。单个 `index.html`，无依赖、可离线。
+
+**在线地址：<https://jiuzhouu.github.io/PadView/>** —— iPad 直接用 Safari 打开即可，推送到 `main` 会自动重新构建。
 
 ## 界面
 
@@ -68,22 +70,28 @@
 
 > Safari 在 `file://` 下可能禁用 localStorage（配色设置无法记住）和 Wake Lock（屏幕常亮失效）。其他功能正常。
 
-### 方式二：HTTPS 托管（推荐，功能完整）
+### 方式二：线上地址（推荐，功能完整）
 
-因为本仓库已在 git 下，最简单的做法是开 GitHub Pages：
+直接用 **<https://jiuzhouu.github.io/PadView/>**，由 GitHub Pages 托管（仓库 Settings → Pages → Deploy from a branch → `main` / `/ (root)`）。
+
+通过 https 打开时下面两项才能生效，这也是推荐用它而不是本地文件的原因：
+
+| 功能 | `file://` 本地文件 | `https://` 线上地址 |
+| --- | --- | --- |
+| 配色设置能否记住（localStorage） | 可能被禁用 | ✅ |
+| 屏幕常亮（Wake Lock） | ❌ | ✅ |
+| 添加到主屏幕后全屏 | 一般 | ✅ |
+
+改完代码推送即可自动更新：
 
 ```bash
-git add index.html README.md
-git commit -m "add shooting timer"
-git push
+git add -A && git commit -m "调整计时看板" && git push
 ```
 
-然后在 GitHub 仓库 Settings → Pages 里选择分支发布，用 iPad Safari 打开生成的地址。
-
-进阶用法：托管后可用 URL 参数直接指定配色，做成多个主屏幕图标：
+进阶用法：可用 URL 参数直接指定配色，做成多个主屏幕图标：
 
 ```
-https://<你的地址>/?bg=000000&fg=ffffff&accent=22d3ee&ms=1
+https://jiuzhouu.github.io/PadView/?bg=000000&fg=ffffff&accent=22d3ee&ms=1
 ```
 
 支持的参数：`bg` `fg` `accent`（十六进制，可省略 `#`）、`scale`、`ms`、`labels`、`h24`、`recordsVisible`、`autoHide`、`awake`（布尔用 `1`/`0`）。
